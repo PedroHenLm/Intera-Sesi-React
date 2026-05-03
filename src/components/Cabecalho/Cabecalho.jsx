@@ -1,5 +1,6 @@
 import { CgProfile } from "react-icons/cg";
-import { AiOutlineHome } from "react-icons/ai";
+import { AiOutlineHome } from "react-icons/ai"
+import { replace, useNavigate } from 'react-router-dom'
 
 export default function Cabecalho() {
   return (<>
@@ -8,8 +9,13 @@ export default function Cabecalho() {
         <img className="w-38 h-12" src="logoSESI.jpg" alt="Logo do sesi" />
       </div>
       <div className="flex gap-5">
-        <AiOutlineHome color="white" size="45"/>
-        <CgProfile color="white" size="45" />
+        <button>
+          <AiOutlineHome color="white" size="45"/>
+        </button>
+        <button >
+          <CgProfile color="white" size="45" />
+        </button>
+        
       </div>
 
 
