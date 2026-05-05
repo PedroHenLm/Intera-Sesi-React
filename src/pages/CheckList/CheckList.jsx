@@ -1,18 +1,53 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LiaClipboardListSolid } from "react-icons/lia";
 import { ImUndo2 } from "react-icons/im";
 import { IoMdAdd } from "react-icons/io";
 import { FaClockRotateLeft } from "react-icons/fa6";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
+import { api } from "../../../api/api-config";
+
 
 const CheckList = () => {
+    const [dialogo, setDialogo] = useState(false)
+    const [historicoAtivo, setHistoricoAtivo] = useState(false);
+    const [modalAtivo, setModalAtivo] = useState(false);
+    const [filtros, setFiltros] = useState([])
+
+    const abrirHistorico = () => {
+        console.log("abriu")
+        setHistoricoAtivo(!historicoAtivo)
+    }
+
+    const fecharHistorico = () => {
+        setHistoricoAtivo(!historicoAtivo)
+    }
+
+    const abrirModal = () => {
+        console.log("tesyte")
+        setDialogo(!dialogo)
+    }
+
+    const fecharModal = () => {
+        setDialogo(!dialogo)
+    }
+
+    async function Opcoes() {
+        const resposta = await api.get('/ListarUsers');
+        setFiltros(resposta.data);
+    }
+
+
+    useEffect(() => {
+        Opcoes();
+    }, [])
+
     return (
         <div className="bg-[#ededed]">
             <Cabecalho />
             <div className="h-16 p-5 flex justify-between items-center bg-white border-b-[3px] border-b-[#ae0909] border-solid">
                 <div className="flex gap-3">
                     <div>
-                        <button className="bg-[#cc0000] w-60 h-9 rounded-[10px] flex items-center justify-center gap-2 ml-5 text-center font-bold px-4">
+                        <button onClick={() => abrirModal()} className="bg-[#cc0000] w-60 h-9 rounded-[10px] flex items-center justify-center gap-2 ml-5 text-center font-bold px-4">
                             <IoMdAdd className="w-6 h-6" color="white" />
                             <p className="m-0 text-white text-[15px]">Adicionar Tarefas</p>
                         </button>
@@ -27,7 +62,7 @@ const CheckList = () => {
                     </div>
                 </div>
                 <div>
-                    <button className="h-9 flex items-center gap-2 ml-5 text-center bg-white justify-around px-4" >
+                    <button onClick={() => abrirHistorico()} className="h-9 flex items-center gap-2 ml-5 text-center bg-white justify-around px-4" >
                         <FaClockRotateLeft color="#cc0000" />
                         <p className="text-[#cc0000]">Historico</p>
                     </button>
@@ -64,6 +99,57 @@ const CheckList = () => {
                     </div>
                 </div>
             </section>
+
+
+            {/* Modais, divs escondidas e tudo que do bom e do pior */}
+
+            <div className={`fixed ${historicoAtivo ? 'top-0 right-0' : 'top-0 -right-full'}  w-100 h-full bg-[#cc0000] text-white shadow-[-4px_0_10px_rgba(0,0,0,0.5)] p-5 flex justify-between flex-row gap-3.75`}>
+                <button onClick={() => fecharHistorico()} className="flex items-center justify-center text-white border-[3px] border-white rounded-[50%] p-0 cursor-pointer w-7.5 h-7.5">
+                    <b>X</b>
+
+                </button>
+                <h2>Histórico</h2>
+            </div>
+
+            <div className={dialogo ? 'fixed left-1/4 top-1/4 w-1/2' : 'hidden'}>
+                <div className="w-full flex justify-end items-center p-2.5 bg-[#cc0000] rounded-[10px]">
+                    <div className="w-full h-12.5 bg-[#cc0000] text-white border-none text-[18px] font-bold flex items-center justify-center">
+                        <h2>Novas Tarefas</h2>
+                    </div>
+                    <button onClick={() => fecharModal()}><b>X</b></button>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full bg-white">
+                    <p>Motivo:</p>
+                    <input type="text" />
+                    <p>Motivo:</p>
+                    <input type="text" />
+                    <p>Motivo:</p>
+                    <input type="text" />
+                    <p>Pessoa Responsavel:</p>
+                    <select>
+                        <option value=""></option>
+                        {filtros.map((filtro) => <option className="text-black" value={filtro.nome} key={filtro.id_usuario}>{filtro.nome}</option>)}
+                    </select>
+                    <p>Localização:</p>
+                    <select name="" id="local">
+                        <option></option>
+                        <option id="Professor">Professor</option>
+                        <option id="Secretaria">Secretaria</option>
+                        <option id="Inspetor">Inspetor</option>
+                        <option id="Direção">Direção</option>
+                    </select>
+                    <p> Nível de Urgência:</p>
+                    <select name="Dificuldade" id="nivel">
+                        <option></option>
+                        <option id="verde">Não Urgente</option>
+                        <option id="amarelo">Normal</option>
+                        <option id="vermelho">Urgente</option>
+                    </select>
+                    <button id="salvar"><b>Salvar</b></button>
+                </div>
+
+            </div>
         </div>
     )
 }
