@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
 import { BsEyeFill } from "react-icons/bs";
 import { BsEyeSlashFill } from "react-icons/bs";
-import { api } from "../../../api/axios-config";
+import { api } from "../../../api/api-config";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -30,7 +30,7 @@ function Login() {
           <div className=" mt-20 flex flex-1 items-center flex-col ">
             <div className="flex flex-col gap-1">
               <img
-                className="w-50 h-15"
+                className="w-[200px] h-[60px]"
                 src="logoSESI.jpg"
                 alt="Logo do SESI"
               />
@@ -39,7 +39,7 @@ function Login() {
             </div>
             <div className="flex flex-col w-70 gap-2">
               <h1 className="flex justify-start font-bold">LOGIN</h1>
-              <div className="flex items-center border p-1 rounded-2xl gap-1">
+              <div className="flex items-center border-1 p-1 rounded-2xl gap-1">
                 <FaUser />
                 <input
                   className=" outline-none"
@@ -49,7 +49,7 @@ function Login() {
                 />
               </div>
               <h1 className="flex justify-start font-bold">SENHA</h1>
-              <div className="flex items-center border p-1 rounded-2xl gap-1">
+              <div className="flex items-center border-1 p-1 rounded-2xl gap-1">
                 <IoIosLock size={20} />
                 <input
                   className="outline-none"
@@ -76,7 +76,7 @@ function Login() {
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => Enviar()}
-                className="bg-[#cc0000] w-62.5 h-10 border-none rounded-[50px] text-white mt-5 font-bold "
+                className="bg-[#cc0000] w-[250px] h-[40px] border-none rounded-[50px] text-white mt-5 font-bold "
               >
                 ENTRAR
               </button>
@@ -89,9 +89,9 @@ function Login() {
               </Link>
             </div>
           </div>
-          <div className="flex m-15 bg-[#cc0000] rounded-[50px] w-112.5 h-108.75 ">
+          <div className="flex m-15 bg-[#cc0000] rounded-[50px] w-[450px] h-[435px] ">
             <img
-              className="w-112.5 h-108.75 justify-center rounded-[50px] opacity-[0.6] mr-6"
+              className="w-[450px] h-[435px] justify-center rounded-[50px] opacity-[0.6] mr-6"
               src="imagemEsquerda.jpg"
               alt=""
             />

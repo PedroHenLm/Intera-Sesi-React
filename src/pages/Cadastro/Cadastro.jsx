@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api } from "../../../api/axios-config";
+import { api } from "../../../api/api-config";
 
 function Cadastro() {
   const [senha, setSenha] = useState("");
