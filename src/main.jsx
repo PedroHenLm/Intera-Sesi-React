@@ -6,6 +6,7 @@ import App from "./App.jsx";
 import Cadastro from "./pages/Cadastro/Cadastro.jsx";
 import Home from "./pages/Principal/Home.jsx";
 import CheckList from "./pages/CheckList/CheckList.jsx";
+import Login from "./pages/Login/Login.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/cadastrar" element={<Cadastro />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/Checklist" element={<CheckList/>} />
       </Routes>

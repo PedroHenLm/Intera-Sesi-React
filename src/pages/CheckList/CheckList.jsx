@@ -5,6 +5,7 @@ import { IoMdAdd } from "react-icons/io";
 import { FaClockRotateLeft } from "react-icons/fa6";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import { api } from "../../../api/api-config";
+import BotaoSessao from "../../components/BotaoSessao/BotaoSessao";
 
 
 const CheckList = () => {
@@ -12,6 +13,16 @@ const CheckList = () => {
     const [historicoAtivo, setHistoricoAtivo] = useState(false);
     const [modalAtivo, setModalAtivo] = useState(false);
     const [filtros, setFiltros] = useState([])
+    const [cargo, setCargo] = useState(null)
+    const [categoria, setCategoria] = useState("professor");
+
+
+    useEffect(() => {
+        const cargoUser = localStorage.getItem("cargo")
+        setCargo(cargoUser)
+    })
+
+
 
     const abrirHistorico = () => {
         console.log("abriu")
@@ -40,6 +51,10 @@ const CheckList = () => {
     useEffect(() => {
         Opcoes();
     }, [])
+
+    useEffect(()=>{
+        console.log(categoria)
+    },[categoria])
 
     return (
         <div className="bg-[#ededed]">
@@ -76,13 +91,10 @@ const CheckList = () => {
                     <h3>TAREFAS</h3>
                 </div>
                 <div className="flex items-end justify-end w-[85%]">
-                    <button className="w-37.5 text-black bg-[#ededed] rounded-t-xl border-2 border-[#cc0000] border-b-0 py-2.5 px-7.5"> professor</button>
-                    <button className="w-37.5 text-black bg-[#ededed] rounded-t-xl border-2 border-[#cc0000] border-b-0 py-2.5 px-7.5">inspetor</button>
-                    <button className="w-37.5 text-black bg-[#ededed] rounded-t-xl border-2 border-[#cc0000] border-b-0 py-2.5 px-7.5">direção</button>
-                    <button className="w-37.5 text-black bg-[#ededed] rounded-t-xl border-2 border-[#cc0000] border-b-0 py-2.5 px-7.5">secretaria</button>
+                    <BotaoSessao label={"professor"} funcao={() => { }} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
+                    <BotaoSessao label={"secretaria"} funcao={() => { }} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
+
                 </div>
-
-
 
             </div>
             {/* não sei pq o width na div dentro da section teve que ser tão especifico */}
