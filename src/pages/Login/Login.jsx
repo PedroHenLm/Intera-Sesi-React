@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 import { IoIosLock } from "react-icons/io";
 import { BsEyeFill } from "react-icons/bs";
 import { BsEyeSlashFill } from "react-icons/bs";
-import { api } from "../../../api/axios-config";
+import { api } from "../../../api/api-config";
 
 function Login() {
   const [email, setEmail] = useState("");
