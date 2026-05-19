@@ -6,22 +6,88 @@ import { FaClockRotateLeft } from "react-icons/fa6";
 import Cabecalho from "../../components/Cabecalho/Cabecalho";
 import { api } from "../../../api/api-config";
 import BotaoSessao from "../../components/BotaoSessao/BotaoSessao";
+import Tarefas from "../../components/Tarefas/Tarefas";
 
 
 const CheckList = () => {
     const [dialogo, setDialogo] = useState(false)
     const [historicoAtivo, setHistoricoAtivo] = useState(false);
     const [modalAtivo, setModalAtivo] = useState(false);
-    const [filtros, setFiltros] = useState([])
-    const [cargo, setCargo] = useState(null)
+    const [filtros, setFiltros] = useState([]);
+    const [cargo, setCargo] = useState(localStorage.getItem("cargo"));
+    const [dados, setDados] = useState([]);
     const [categoria, setCategoria] = useState("professor");
+    const [id_usuario, setIdUsuario] = useState(localStorage.getItem('id_usuario'))
+
+    const [formTarefa, setFormTarefa] = useState({
+        funcao: '',
+        data: '',
+        prazo: '',
+        responsavel: '',
+        localizacao: '',
+        urgencia: '',
+        id_usuario
+    })
+
+    async function carregarTarefas() {
+        try {
+            const { data, status } = await api.get(`/MostrarTarefa/${categoria}`);
+            if (status == 200) {
+                console.log(data)
+                setDados(data);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const NotarMudança = (e) => {
+        const { name, value, id } = e.target;
+        const campo = name || id;
+
+        setFormTarefa(prevState => ({
+            ...prevState,
+            [campo]: value
+        }));
+    }
+
+    async function enviarDados(e) {
+        console.log(formTarefa)
+        e.preventDefault()
+
+        if (!formTarefa.funcao || !formTarefa.responsavel) {
+            alert('Por favor, preencha o motivo e o responsável');
+            return;
+        }
+
+        try {
+            const response = await api.post('/checklist', formTarefa);
+  
+            setFormTarefa({
+                funcao: '',
+                data: '',
+                prazo: '',
+                responsavel: '',
+                localizacao: '',
+                urgencia: ''
+            })
+
+            fecharModal()
+            carregarTarefas()
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 
     useEffect(() => {
-        const cargoUser = localStorage.getItem("cargo")
-        setCargo(cargoUser)
-    })
+        Opcoes();
+    }, []);
 
+
+    useEffect(() => {
+        carregarTarefas();
+    }, [categoria])
 
 
     const abrirHistorico = () => {
@@ -46,15 +112,6 @@ const CheckList = () => {
         const resposta = await api.get('/ListarUsers');
         setFiltros(resposta.data);
     }
-
-
-    useEffect(() => {
-        Opcoes();
-    }, [])
-
-    useEffect(()=>{
-        console.log(categoria)
-    },[categoria])
 
     return (
         <div className="bg-[#ededed]">
@@ -91,26 +148,18 @@ const CheckList = () => {
                     <h3>TAREFAS</h3>
                 </div>
                 <div className="flex items-end justify-end w-[85%]">
-                    <BotaoSessao label={"professor"} funcao={() => { }} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
-                    <BotaoSessao label={"secretaria"} funcao={() => { }} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
+                    <BotaoSessao label={"Professor"} funcao={() => setDados} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
+                    <BotaoSessao label={"Secretaria"} funcao={() => setDados} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
+                    <BotaoSessao label={"Direção"} funcao={() => setDados} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
+                    <BotaoSessao label={"Inspetor"} funcao={() => setDados} categoriaAtual={categoria} setCategoriaAtual={setCategoria} />
 
                 </div>
 
             </div>
+
             {/* não sei pq o width na div dentro da section teve que ser tão especifico */}
-            <section className="flex items-center justify-center">
-                <div className="w-[99%] h-122.75 max-h-[80vh] bg-white rounded-t-[20px] overflow-y-auto p-2.5">
-                    <div className="grid grid-cols-[2fr_2fr_2fr_2fr_2fr_1fr_1fr] gap-2.5 bg-white p-2.5 rounded-[10px]">
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Tarefa</p>
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Data e Hora</p>
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Responsável</p>
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Localização</p>
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Prazo</p>
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Deletar</p>
-                        <p className="m-0 p-2 rounded-[5px] text-center text-[14px] bg-[#f8f8f8]">Editar</p>
-                    </div>
-                </div>
-            </section>
+            <Tarefas tarefas={dados} />
+
 
 
             {/* Modais, divs escondidas e tudo que do bom e do pior */}
@@ -123,44 +172,97 @@ const CheckList = () => {
                 <h2>Histórico</h2>
             </div>
 
-            <div className={dialogo ? 'fixed left-1/4 top-1/4 w-1/2' : 'hidden'}>
-                <div className="w-full flex justify-end items-center p-2.5 bg-[#cc0000] rounded-[10px]">
-                    <div className="w-full h-12.5 bg-[#cc0000] text-white border-none text-[18px] font-bold flex items-center justify-center">
-                        <h2>Novas Tarefas</h2>
+   <div className={dialogo ? 'fixed left-1/4 top-1/4 w-1/2 z-50' : 'hidden'}>
+                <form onSubmit={enviarDados}>
+                    <div className="w-full flex justify-end items-center p-2.5 bg-[#cc0000] rounded-t-[10px]">
+                        <div className="w-full h-12.5 bg-[#cc0000] text-white border-none text-[18px] font-bold flex items-center justify-center">
+                            <h2>Novas Tarefas</h2>
+                        </div>
+                        <button type="button" onClick={fecharModal} className="text-white font-bold text-xl"><b>X</b></button>
                     </div>
-                    <button onClick={() => fecharModal()}><b>X</b></button>
-                </div>
 
-                <div className="flex flex-col gap-2 w-full bg-white">
-                    <p>Motivo:</p>
-                    <input type="text" />
-                    <p>Motivo:</p>
-                    <input type="text" />
-                    <p>Motivo:</p>
-                    <input type="text" />
-                    <p>Pessoa Responsavel:</p>
-                    <select>
-                        <option value=""></option>
-                        {filtros.map((filtro) => <option className="text-black" value={filtro.nome} key={filtro.id_usuario}>{filtro.nome}</option>)}
-                    </select>
-                    <p>Localização:</p>
-                    <select name="" id="local">
-                        <option></option>
-                        <option id="Professor">Professor</option>
-                        <option id="Secretaria">Secretaria</option>
-                        <option id="Inspetor">Inspetor</option>
-                        <option id="Direção">Direção</option>
-                    </select>
-                    <p> Nível de Urgência:</p>
-                    <select name="Dificuldade" id="nivel">
-                        <option></option>
-                        <option id="verde">Não Urgente</option>
-                        <option id="amarelo">Normal</option>
-                        <option id="vermelho">Urgente</option>
-                    </select>
-                    <button id="salvar"><b>Salvar</b></button>
-                </div>
-
+                    <div className="flex flex-col gap-2 w-full bg-white p-5 rounded-b-[10px]">
+                        <p>Motivo:</p>
+                        <input 
+                            type="text" 
+                            name="funcao"
+                            value={formTarefa.funcao}
+                            onChange={NotarMudança}
+                            required
+                            className="border p-2 rounded"
+                        />
+                        
+                        <p>Data e Hora:</p>
+                        <input 
+                            type="datetime-local" 
+                            name="data"
+                            value={formTarefa.data}
+                            onChange={NotarMudança}
+                            className="border p-2 rounded"
+                        />
+                        
+                        <p>Prazo:</p>
+                        <input 
+                            type="date" 
+                            name="prazo"
+                            value={formTarefa.prazo}
+                            onChange={NotarMudança}
+                            className="border p-2 rounded"
+                        />
+                        
+                        <p>Pessoa Responsável:</p>
+                        <select 
+                            name="responsavel"
+                            value={formTarefa.responsavel}
+                            onChange={NotarMudança}
+                            required
+                            className="border p-2 rounded"
+                        >
+                            <option value="">Selecione um responsável</option>
+                            {filtros.map((filtro) => (
+                                <option value={filtro.nome} key={filtro.id_usuario}>
+                                    {filtro.nome}
+                                </option>
+                            ))}
+                        </select>
+                        
+                        <p>Localização:</p>
+                        <select 
+                            name="localizacao" 
+                            id="local"
+                            value={formTarefa.localizacao}
+                            onChange={NotarMudança}
+                            className="border p-2 rounded"
+                        >
+                            <option value="">Selecione</option>
+                            <option value="Professor">Professor</option>
+                            <option value="Secretaria">Secretaria</option>
+                            <option value="Inspetor">Inspetor</option>
+                            <option value="Direção">Direção</option>
+                        </select>
+                        
+                        <p>Nível de Urgência:</p>
+                        <select 
+                            name="urgencia" 
+                            id="nivel"
+                            value={formTarefa.urgencia}
+                            onChange={NotarMudança}
+                            className="border p-2 rounded"
+                        >
+                            <option value="">Selecione</option>
+                            <option value="Não Urgente">Não Urgente</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Urgente">Urgente</option>
+                        </select>
+                        
+                        <button 
+                            type="submit" 
+                            id="salvar"
+                            className="bg-[#cc0000] text-white p-2 rounded mt-3 font-bold hover:bg-[#aa0000] transition-colors"
+                        >
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     )

@@ -12,10 +12,13 @@ const BotaoSessao = ({ label, funcao, categoriaAtual, setCategoriaAtual }) => {
         }
     },[categoriaAtual])
 
+   
+
     return (
     <button onClick={()=>{
         setCategoriaAtual(label);
-    }} className={`w-37.5 text-black ${isSelected ? 'bg-[#ededed]' : 'bg-red-600'} rounded-t-xl border-2 border-[#cc0000] border-b-0 py-2.5 px-7.5`}>{label}</button>
+        funcao(label);
+    }} className={`w-37.5 text-black ${isSelected ? 'bg-white' : 'bg-[#ededed]'} rounded-t-xl border-2 border-[#cc0000] border-b-0 py-2.5 px-7.5`}>{label}</button>
     )
 }
 

@@ -7,6 +7,7 @@ import Cadastro from "./pages/Cadastro/Cadastro.jsx";
 import Home from "./pages/Principal/Home.jsx";
 import CheckList from "./pages/CheckList/CheckList.jsx";
 import Login from "./pages/Login/Login.jsx";
+import MudarSenha from "./pages/MudarSenha/MudarSenha.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -17,6 +18,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/Checklist" element={<CheckList/>} />
+        <Route path="/Mudarsenha" element={<MudarSenha/>} />
+
       </Routes>
     </BrowserRouter>
   </StrictMode>,
